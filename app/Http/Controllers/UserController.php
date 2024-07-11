@@ -143,6 +143,12 @@ class UserController extends Controller
 //            ->where('songaynghi', '>', 15)
 //            ->delete();
 
+        $listUsers = DB::table('users')
+            ->join('phongban', 'users.phongban_id', '=', 'phongban.id')
+            ->select('users.id', 'users.name', 'users.email', 'phongban.ten_donvi')
+            ->get();
+
+        return view('users.listUsers', compact('listUsers'));
     }
 
     public function info()
@@ -163,7 +169,11 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        $departments = DB::table('phongban')
+            ->select('id', 'ten_donvi')
+            ->get();
+
+        return view('users.create', compact('departments'));
     }
 
     /**
@@ -171,7 +181,27 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+            'phongban_id' => 'required',
+            'tuoi' => 'required'
+        ]);
+
+        $insert = [
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'phongban_id' => $data['phongban_id'],
+            'tuoi' => $data['tuoi'],
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now()
+        ];
+
+        DB::table('users')->insert($insert);
+
+        return redirect()->route('users.listUsers');
     }
 
     /**
@@ -206,6 +236,10 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        DB::table('users')
+            ->where('id', $id)
+            ->delete();
+
+        return redirect()->route('users.listUsers');
     }
 }
