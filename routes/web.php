@@ -62,7 +62,6 @@ Route::prefix('users')
         Route::get('delete-users/{id}', [UserController::class, 'destroy'])->name('deleteUser');
     });
 
-
 // Product
 Route::prefix('products')
     ->as('products.')
@@ -79,3 +78,7 @@ Route::prefix('products')
 
         Route::get('delete/{id}', [ProductController::class, 'destroy'])->name('delete');
     });
+
+Route::get('test', function () {
+    return view('admin.products.index');
+});
